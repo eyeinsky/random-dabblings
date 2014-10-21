@@ -1,0 +1,33 @@
+#!/bin/bash
+
+while getopts "p:h:d:m:" Option
+do case $Option in
+   p ) port="$OPTARG" ;;
+   h ) host="$OPTARG";;
+   d ) dir="$OPTARG";;
+   m ) method="$OPTARG";;
+   esac
+done
+
+if [ "$port" == '' ]; then port=8080; fi
+if [ "$host" == '' ]; then host=127.0.0.1; fi
+if [ "$dir" == '' ] ; then dir=.; fi
+
+SELF="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+loop="$SELF/loop.sh"
+set -e
+
+cd $dir
+
+case "$method" in
+   socat )
+      socat TCP4-LISTEN:$port,fork \
+            EXEC:$loop
+      ;;
+   * | nc | netcat ) 
+      while : ; do
+         nc -e "$loop" -l -p $port $host 
+      done
+      ;;
+esac
+
