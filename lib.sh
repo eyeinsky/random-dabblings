@@ -1,3 +1,7 @@
+
+
+source html.sh
+
 cttext() { echo -n "Content-Type: text/$1; charset=utf8"; }
 ct() { echo -n "Content-Type: $1"; }
 ce() { echo -n "Content-Encoding: $1"; }
@@ -21,23 +25,6 @@ urle() {
 
 urld() { 
    echo "$1" | echo -ne "$(sed 's/+/ /g;s/%\(..\)/\\x\1/g;')"
-   }
-
-#
-# HTML
-#
-
-# html :: tag -> contents [-> attrs] -> html
-html() { echo "<$1 $3>$2</$1>"; }
-
-# page :: head -> body -> html
-page() { echo "<!DOCTYPE html>$(html html "$(html head "$1")$(html body "$2")")"; }
-
-# notfound :: path -> html
-notfound() {
-   page "$(html title '404 Not Found')" \
-        "$(html h1 'Not Found')
-         $(html p "The requested URL /$1 was not found on this server")"
    }
 
 
